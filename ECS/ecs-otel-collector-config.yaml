@@ -1,0 +1,52 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: 'spring-petclinic'
+          scrape_interval: 5s
+          static_configs:
+            - targets: ['localhost:8080']
+              metrics_path: /actuator/prometheus
+  filelog:
+    include: ["/var/log/app/app.log"]
+    start_at: beginning
+    operators:
+      - type: regex_parser
+        regex: '^(?P<timestamp>[^ ]+ [^ ]+) \[(?P<thread>[^\]]+)\] (?P<level>[A-Z]+) (?P<logger>[^ ]+) - (?P<message>.*)$'
+        timestamp:
+          parse_from: attributes.timestamp
+          layout_type: gotime
+          layout: '2006-01-02 15:04:05'
+
+processors:
+  batch:
+
+exporters:
+  awsxray:
+  awsemf:
+    log_group_name: "/aws/ecs/spring-petclinic"
+    log_stream_name: "adot-metrics"
+    namespace: "SpringPetClinic"
+  awscloudwatchlogs:
+    log_group_name: "/aws/ecs/spring-petclinic"
+    log_stream_name: "adot-logs"
+    region: "ap-northeast-1"
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [awsxray]
+    metrics:
+      receivers: [otlp, prometheus]
+      processors: [batch]
+      exporters: [awsemf]
+    logs:
+      receivers: [filelog]
+      processors: [batch]
+      exporters: [awscloudwatchlogs]
