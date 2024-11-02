@@ -1,0 +1,91 @@
+{
+  "family": "spring-petclinic-task",
+  "networkMode": "awsvpc",
+  "executionRoleArn": "arn:aws:iam::<your-account-id>:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::<your-account-id>:role/ecsTaskRole",
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "cpu": "512",
+  "memory": "1024",
+  "containerDefinitions": [
+    {
+      "name": "spring-petclinic",
+      "image": "<your-ecr-repository>/spring-petclinic:latest",
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true,
+      "environment": [
+        {
+          "name": "OTEL_METRICS_EXPORTER",
+          "value": "otlp"
+        },
+        {
+          "name": "OTEL_EXPORTER_OTLP_ENDPOINT",
+          "value": "http://localhost:4317"
+        },
+        {
+          "name": "OTEL_RESOURCE_ATTRIBUTES",
+          "value": "service.name=spring-petclinic"
+        },
+        {
+          "name": "OTEL_TRACES_SAMPLER",
+          "value": "always_on"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/spring-petclinic",
+          "awslogs-region": "<your-region>",
+          "awslogs-stream-prefix": "spring-petclinic"
+        }
+      }
+    },
+    {
+      "name": "adot-collector",
+      "image": "public.ecr.aws/aws-observability/aws-otel-collector:latest",
+      "essential": false,
+      "portMappings": [
+        {
+          "containerPort": 4317,
+          "protocol": "tcp"
+        },
+        {
+          "containerPort": 55680,
+          "protocol": "tcp"
+        }
+      ],
+      "command": [
+        "--config=/etc/ecs/ecs-otel-collector-config.yaml"
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "adot-config",
+          "containerPath": "/etc/ecs/"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/adot-collector",
+          "awslogs-region": "<your-region>",
+          "awslogs-stream-prefix": "adot-collector"
+        }
+      }
+    }
+  ],
+  "volumes": [
+    {
+      "name": "adot-config",
+      "efsVolumeConfiguration": {
+        "fileSystemId": "<your-efs-filesystem-id>",
+        "rootDirectory": "/adot-config"
+      }
+    }
+  ]
+}
