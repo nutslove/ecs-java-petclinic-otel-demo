@@ -8,19 +8,18 @@ receivers:
       scrape_configs:
         - job_name: 'spring-petclinic'
           scrape_interval: 5s
+          metrics_path: /actuator/prometheus
           static_configs:
             - targets: ['localhost:8080']
-              metrics_path: /actuator/prometheus
   filelog:
     include: ["/var/log/app/app.log"]
     start_at: beginning
     operators:
       - type: regex_parser
-        regex: '^(?P<timestamp>[^ ]+ [^ ]+) \[(?P<thread>[^\]]+)\] (?P<level>[A-Z]+) (?P<logger>[^ ]+) - (?P<message>.*)$'
+        regex: '^(?P<timestamp>\d{2}:\d{2}:\d{2}\.\d{3}) trace_id=(?P<trace_id>\w+) span_id=(?P<span_id>\w+) trace_flags=(?P<trace_flags>\w+) (?P<message>.*)$'
         timestamp:
           parse_from: attributes.timestamp
-          layout_type: gotime
-          layout: '2006-01-02 15:04:05'
+          layout: '%H:%M:%S.%L'
 
 processors:
   batch:
