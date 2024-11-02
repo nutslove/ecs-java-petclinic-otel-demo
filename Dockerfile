@@ -6,7 +6,7 @@ COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
 COPY aws-opentelemetry-agent.jar ./
 
-RUN ./mvnw dependency:resolve
+RUN chmod +x mvnw && ./mvnw dependency:resolve
 
 COPY src ./src
 
