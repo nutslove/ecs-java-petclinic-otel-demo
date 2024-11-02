@@ -16,6 +16,6 @@ ENV OTEL_LOGS_EXPORTER=otlp
 ENV OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
 ENV OTEL_SERVICE_NAME=spring-petclinic
 ENV OTEL_RESOURCE_ATTRIBUTES=service.name=spring-petclinic,service.namespace=ecs
-ENV JAVA_TOOL_OPTIONS="-javaagent:/app/opentelemetry-javaagent.jar"
+ENV JAVA_TOOL_OPTIONS="-javaagent:/app/aws-opentelemetry-agent.jar"
 
 CMD ["./mvnw", "spring-boot:run"]
