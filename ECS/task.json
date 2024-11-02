@@ -1,5 +1,5 @@
 {
-  "family": "spring-petclinic-task",
+  "family": "spring-petclinic-with-adot-collector-task",
   "networkMode": "awsvpc",
   "executionRoleArn": "arn:aws:iam::299413808364:role/ecsTaskExecutionRole",
   "taskRoleArn": "arn:aws:iam::299413808364:role/ecsTaskRole",
