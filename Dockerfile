@@ -1,14 +1,14 @@
 FROM eclipse-temurin:21-jdk-jammy
- 
+
 WORKDIR /app
 
 COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
+COPY aws-opentelemetry-agent.jar ./
+
 RUN ./mvnw dependency:resolve
 
 COPY src ./src
-
-COPY aws-opentelemetry-agent.jar ./
 
 ENV OTEL_TRACES_EXPORTER=otlp
 ENV OTEL_METRICS_EXPORTER=otlp
