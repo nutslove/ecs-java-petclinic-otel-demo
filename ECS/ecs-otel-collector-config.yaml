@@ -53,6 +53,7 @@ exporters:
 
 
 service:
+  extensions: [sigv4auth]
   pipelines:
     traces:
       receivers: [otlp]
