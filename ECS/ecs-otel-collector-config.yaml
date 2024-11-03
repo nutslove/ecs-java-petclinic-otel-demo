@@ -1,3 +1,8 @@
+extensions:
+  sigv4auth:
+    service: "aps"
+    region: "ap-northeast-1"
+
 receivers:
   otlp:
     protocols:
@@ -7,10 +12,17 @@ receivers:
     config:
       scrape_configs:
         - job_name: 'spring-petclinic'
-          scrape_interval: 5s
+          scrape_interval: 30s
           metrics_path: /actuator/prometheus
           static_configs:
             - targets: ['localhost:8080']
+        - job_name: 'otel'
+          scrape_interval: 30s
+          metrics_path: /metrics
+          static_configs:
+            - targets: ['localhost:9464']
+  awsecscontainermetrics:
+    collection_interval: 30s
   filelog:
     include: ["/var/log/app/app.log"]
     start_at: beginning
@@ -30,10 +42,15 @@ exporters:
     log_group_name: "/aws/ecs/spring-petclinic"
     log_stream_name: "adot-metrics"
     namespace: "SpringPetClinic"
+  prometheusremotewrite:
+    endpoint: "https://aps-workspaces.ap-northeast-1.amazonaws.com/workspaces/ws-3a53e980-2983-458b-88ce-1956a5dcd9e0/api/v1/remote_write"
+    auth:
+      authenticator: sigv4auth
   awscloudwatchlogs:
     log_group_name: "/aws/ecs/spring-petclinic"
     log_stream_name: "adot-logs"
     region: "ap-northeast-1"
+
 
 service:
   pipelines:
@@ -42,9 +59,9 @@ service:
       processors: [batch]
       exporters: [awsxray]
     metrics:
-      receivers: [otlp, prometheus]
+      receivers: [otlp,prometheus,awsecscontainermetrics]
       processors: [batch]
-      exporters: [awsemf]
+      exporters: [awsemf,prometheusremotewrite]
     logs:
       receivers: [filelog]
       processors: [batch]
