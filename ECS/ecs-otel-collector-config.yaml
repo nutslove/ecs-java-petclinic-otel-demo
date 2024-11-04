@@ -38,6 +38,7 @@ processors:
 
 exporters:
   awsxray:
+    region: ap-northeast-1
   awsemf:
     log_group_name: "/aws/ecs/spring-petclinic"
     log_stream_name: "adot-metrics"
@@ -50,7 +51,8 @@ exporters:
     log_group_name: "/aws/ecs/spring-petclinic"
     log_stream_name: "adot-logs"
     region: "ap-northeast-1"
-
+  otlp:
+    endpoint: 10.111.1.179:4317
 
 service:
   extensions: [sigv4auth]
@@ -58,7 +60,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [awsxray]
+      exporters: [awsxray,otlp]
     metrics:
       receivers: [otlp,prometheus,awsecscontainermetrics]
       processors: [batch]
