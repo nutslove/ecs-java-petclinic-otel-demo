@@ -17,20 +17,64 @@
         {
           "name": "OTEL_TRACES_SAMPLER",
           "value": "always_on"
-        }
-      ],
-      "mountPoints": [
+        },
         {
-          "sourceVolume": "shared-logs",
-          "containerPath": "/var/log/app"
+          "name": "OTEL_TRACES_EXPORTER",
+          "value": "otlp"
+        },
+        {
+          "name": "OTEL_METRICS_EXPORTER",
+          "value": "prometheus"
+        },
+        {
+          "name": "OTEL_LOGS_EXPORTER",
+          "value": "otlp"
+        },
+        {
+          "name": "OTEL_EXPORTER_OTLP_ENDPOINT",
+          "value": "http://localhost:4317"
+        },
+        {
+          "name": "OTEL_EXPORTER_OTLP_INSECURE",
+          "value": "true"
+        },
+        {
+          "name": "OTEL_SERVICE_NAME",
+          "value": "spring-petclinic-on-ecs"
+        },
+        {
+          "name": "OTEL_RESOURCE_ATTRIBUTES",
+          "value": "service.name=spring-petclinic,service.namespace=ecs"
+        },
+        {
+          "name": "JAVA_TOOL_OPTIONS",
+          "value": "-javaagent:/etc/ecs/aws-opentelemetry-agent.jar"
         }
       ],
+      // "mountPoints": [
+      //   {
+      //     "sourceVolume": "shared-logs",
+      //     "containerPath": "/var/log/app"
+      //   }
+      // ],
       "portMappings": [
         {
           "containerPort": 8080,
           "protocol": "tcp"
+        },
+        {
+          "containerPort": 9464,
+          "protocol": "tcp"
         }
-      ]
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/pet-clinic-from-mvnw",
+          "awslogs-region": "ap-northeast-1",
+          "awslogs-stream-prefix": "pet-clinic-from-mvnw"
+        }
+      }
     },
     {
       "name": "adot-collector",
@@ -40,10 +84,10 @@
         "--config=/etc/ecs/ecs-otel-collector-config.yaml"
       ],
       "mountPoints": [
-        {
-          "sourceVolume": "shared-logs",
-          "containerPath": "/var/log/app"
-        },
+        // {
+        //   "sourceVolume": "shared-logs",
+        //   "containerPath": "/var/log/app"
+        // },
         {
           "sourceVolume": "adot-config",
           "containerPath": "/etc/ecs/"
@@ -52,6 +96,14 @@
       "portMappings": [
         {
           "containerPort": 4317,
+          "protocol": "tcp"
+        },
+        {
+          "containerPort": 4318,
+          "protocol": "tcp"
+        },
+        {
+          "containerPort": 13133,
           "protocol": "tcp"
         }
       ],

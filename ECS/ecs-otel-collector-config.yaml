@@ -27,8 +27,8 @@ receivers:
             - targets: ['localhost:9464']
   awsecscontainermetrics:
     collection_interval: 30s
-  filelog:
-    include: ["/var/log/app/app.log"]
+  # filelog:
+  #   include: ["/var/log/app/app.log"]
     # start_at: beginning
     # operators:
     #   - type: regex_parser
@@ -57,10 +57,10 @@ exporters:
       insecure: true
     headers:
       THANOS-TENANT: "ecs-tenant"
-  awscloudwatchlogs:
-    log_group_name: "/aws/ecs/spring-petclinic"
-    log_stream_name: "adot-logs"
-    region: "ap-northeast-1"
+  # awscloudwatchlogs:
+  #   log_group_name: "/aws/ecs/spring-petclinic"
+  #   log_stream_name: "adot-logs"
+  #   region: "ap-northeast-1"
   otlp:
     endpoint: 10.111.1.179:4317
     tls:
@@ -69,10 +69,10 @@ exporters:
     endpoint: http://10.111.1.179:4318
     tls:
       insecure: true
-  otlphttp/logs:
-    endpoint: "http://10.111.1.179:3100/otlp"
-    tls:
-      insecure: true
+  # otlphttp/logs:
+  #   endpoint: "http://10.111.1.179:3100/otlp"
+  #   tls:
+  #     insecure: true
 
 service:
   extensions: [sigv4auth,health_check]
@@ -88,7 +88,7 @@ service:
       receivers: [otlp,prometheus,awsecscontainermetrics]
       processors: [batch]
       exporters: [awsemf,prometheusremotewrite,prometheusremotewrite/thanos]
-    logs:
-      receivers: [filelog]
-      processors: [batch]
-      exporters: [awscloudwatchlogs,otlphttp/logs]
+    # logs:
+    #   receivers: [filelog]
+    #   processors: [batch]
+    #   exporters: [awscloudwatchlogs,otlphttp/logs]
