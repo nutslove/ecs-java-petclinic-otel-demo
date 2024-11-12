@@ -1,6 +1,3 @@
-# 目的
-- ECS上でJavaアプリ(pet clinic)を動かし、metrics/logs/tracesの連携テストを行うため
-
 # Fork
 - 以下リポジトリからFork
   - https://github.com/dockersamples/spring-petclinic-docker

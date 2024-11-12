@@ -1,0 +1,1 @@
+- ECS上でJavaアプリ(pet clinic)を動かし、metrics/logs/tracesの連携テストを行うためのリポジトリ
