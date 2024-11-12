@@ -69,7 +69,7 @@ exporters:
     endpoint: http://10.111.1.179:4318
     tls:
       insecure: true
-  # otlphttp/logs:
+  # otlphttp/logs: ## Loki
   #   endpoint: "http://10.111.1.179:3100/otlp"
   #   tls:
   #     insecure: true
