@@ -29,13 +29,13 @@ receivers:
     collection_interval: 30s
   filelog:
     include: ["/var/log/app/app.log"]
-    start_at: beginning
-    operators:
-      - type: regex_parser
-        regex: '^(?P<timestamp>\d{2}:\d{2}:\d{2}\.\d{3}) trace_id=(?P<trace_id>\w+) span_id=(?P<span_id>\w+) trace_flags=(?P<trace_flags>\w+) (?P<message>.*)$'
-        timestamp:
-          parse_from: attributes.timestamp
-          layout: '%H:%M:%S.%L'
+    # start_at: beginning
+    # operators:
+    #   - type: regex_parser
+    #     regex: '^(?P<timestamp>\d{2}:\d{2}:\d{2}\.\d{3}) trace_id=(?P<trace_id>\w+) span_id=(?P<span_id>\w+) trace_flags=(?P<trace_flags>\w+) (?P<message>.*)$'
+    #     timestamp:
+    #       parse_from: attributes.timestamp
+    #       layout: '%H:%M:%S.%L'
 
 processors:
   batch:
